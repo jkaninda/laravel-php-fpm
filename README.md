@@ -19,3 +19,33 @@ Docker image for a php-fpm container crafted to run Laravel or any php based app
 * Memcached
 * Laravel Cron Job
 * Laravel Envoy
+* Supervisor
+
+## Simple docker-compose usage:
+
+```yml
+version: '3'
+services:
+    php-fpm:
+        image: jkaninda/laravel-php-fpm:<Tagname> or latest
+        container_name: php-fpm
+        restart: unless-stopped      
+        volumes:
+        #Project root
+            - ./:/var/www/
+        networks:
+            - default #if you're using networks between containers
+
+```
+## Laravel `artisan` command usage:
+### Open php-fpm
+```bash
+docker-compose exec php-fpm /bin/bash
+
+```
+
+### Laravel migration
+```bash
+php atisan  migrate
+
+```
