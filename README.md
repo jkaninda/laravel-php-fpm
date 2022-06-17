@@ -18,8 +18,9 @@ Docker image for a php-fpm container crafted to run Laravel or any php based app
 * BCMath PHP Extension
 * Memcached
 * Laravel Cron Job
+* Laravel Schedule
 * Laravel Envoy
-* Supervisor
+* Supervisord
 
 ## Simple docker-compose usage:
 
