@@ -78,7 +78,7 @@ services:
       - 443:443
     volumes:
       - ./:/var/www
-      - nginx/conf.d/:/etc/nginx/conf.d/
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - default
 
