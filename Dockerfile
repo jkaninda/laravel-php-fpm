@@ -1,4 +1,4 @@
-FROM php:7.4-fpm
+FROM php:8.1.0-fpm
 ENV WORKDIR=/var/www
 ENV STORAGE_DIR=/var/www/storage
 # Install system dependencies
@@ -57,25 +57,26 @@ RUN docker-php-ext-install pdo_pgsql
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy php.ini file
-COPY php/php.ini   $PHP_INI_DIR/conf.d/
+COPY php.ini   $PHP_INI_DIR/conf.d/
 
 # Install Laravel Envoy
 RUN composer global require "laravel/envoy=~1.0"
 
 #--------------------Add supervisor file in supervisor directory ------------------------------------
-ADD worker/supervisord.conf /etc/supervisor/conf.d/worker.conf
+#ADD worker/supervisord.conf /etc/supervisor/conf.d/worker.conf
 
-# Add crontab file in the cron directory
-ADD worker/crontab /etc/cron.d/crontab
+COPY ./entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN ln -s /usr/local/bin/entrypoint.sh /
 
-# Give execution rights on the cron job
-RUN chmod 0644 /etc/cron.d/crontab
+ENTRYPOINT ["entrypoint.sh"]
 
 # Set working directory
 WORKDIR $WORKDIR
 
 RUN usermod -u 1000 www-data
 RUN groupmod -g 1000 www-data
+
 
 EXPOSE 9000
 # Run Supervisor
