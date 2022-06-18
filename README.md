@@ -34,6 +34,8 @@ services:
         volumes:
         #Project root
             - ./:/var/www/
+            - ~/.ssh:/root/.ssh # If you use private CVS
+
         networks:
             - default #if you're using networks between containers
 
@@ -51,6 +53,7 @@ php atisan  migrate
 
 ```
 ## Example Laravel-php-fpm with nginx:
+### file= docker-compose.yml
 ```yml
 version: '3'
 services:
@@ -61,6 +64,8 @@ services:
         volumes:
         #Project root
             - ./:/var/www/
+            - ~/.ssh:/root/.ssh # If you use private CVS
+
         networks:
             - default #if you're using networks between containers
     #Nginx server
@@ -79,6 +84,7 @@ services:
 
 ```
 ## Simple Nginx config file content
+### file= nginx/conf.d/default.conf
 
 ```conf
 
