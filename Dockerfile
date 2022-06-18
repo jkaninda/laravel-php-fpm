@@ -1,4 +1,4 @@
-FROM php:8.1-fpm
+FROM php:7.4-fpm
 ENV WORKDIR=/var/www
 ENV STORAGE_DIR=/var/www/storage
 # Install system dependencies
