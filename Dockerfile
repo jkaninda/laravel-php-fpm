@@ -62,8 +62,6 @@ COPY php.ini   $PHP_INI_DIR/conf.d/
 # Install Laravel Envoy
 RUN composer global require "laravel/envoy=~1.0"
 
-#--------------------Add supervisor file in supervisor directory ------------------------------------
-#ADD worker/supervisord.conf /etc/supervisor/conf.d/worker.conf
 
 COPY ./entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
