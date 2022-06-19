@@ -1,6 +1,8 @@
 # Laravel PHP-FPM Docker image
 
-Docker image for a php-fpm container crafted to run Laravel or any php based applications.
+> 🐳 Docker image for a PHP-FPM container crafted to run Laravel or any php based applications.
+
+- [Docker Hub](https://hub.docker.com/r/jkaninda/laravel-php-fpm)
 
 ## Specifications:
 
@@ -53,7 +55,7 @@ php atisan  migrate
 
 ```
 ## Example Laravel-php-fpm with nginx:
-### file= docker-compose.yml
+### docker-compose.yml
 ```yml
 version: '3'
 services:
@@ -83,7 +85,7 @@ services:
 
 ```
 ## Simple Nginx config file content
-### file= nginx/conf.d/default.conf
+### nginx/conf.d/default.conf
 
 ```conf
 
