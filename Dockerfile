@@ -40,7 +40,7 @@ RUN docker-php-ext-enable rdkafka \
     && rm -rf /php-rdkafka
 
 # Install PHP extensions zip, mbstring, exif, bcmath, intl
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-configure gd
 RUN docker-php-ext-install  zip mbstring exif pcntl bcmath -j$(nproc) gd intl
 
 
