@@ -1,4 +1,4 @@
-FROM php:8.1-fpm
+FROM php:8.1.0-fpm
 ENV WORKDIR=/var/www
 ENV STORAGE_DIR=/var/www/storage
 # Install system dependencies
@@ -31,7 +31,12 @@ RUN git clone https://github.com/arnaud-lb/php-rdkafka.git\
     && phpize \
     && ./configure \
     && make all -j 5 \
-    && make install
+    && make install 
+
+# Install Rdkafka and enable it
+RUN docker-php-ext-enable rdkafka \
+     && cd .. \
+    && rm -rf /php-rdkafka
 
 # Install PHP extensions zip, mbstring, exif, bcmath, intl
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
@@ -40,9 +45,7 @@ RUN docker-php-ext-install  zip mbstring exif pcntl bcmath -j$(nproc) gd intl
 # Install Redis and enable it
 RUN pecl install redis  && docker-php-ext-enable redis
 
-# Install Rdkafka and enable it
-RUN docker-php-ext-enable rdkafka \
-    && rm -rf /php-rdkafka
+
 
 # Install the php memcached extension
 RUN pecl install memcached && docker-php-ext-enable memcached
@@ -61,7 +64,8 @@ COPY php.ini   $PHP_INI_DIR/conf.d/
 
 # Install Laravel Envoy
 RUN composer global require "laravel/envoy=~1.0"
-
+# Set working directory
+WORKDIR $WORKDIR
 
 COPY ./entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
@@ -69,13 +73,14 @@ RUN ln -s /usr/local/bin/entrypoint.sh /
 
 ENTRYPOINT ["entrypoint.sh"]
 
-# Set working directory
-WORKDIR $WORKDIR
+
 
 RUN usermod -u 1000 www-data
 RUN groupmod -g 1000 www-data
 
+RUN chmod 755 $WORKDIR
+
 
 EXPOSE 9000
-# Run Supervisor
-CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+# entrypoint
+CMD [ "entrypoint" ]

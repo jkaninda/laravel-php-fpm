@@ -6,4 +6,5 @@ if [ $# -eq 0 ]
     tag=$1
 fi
 
-docker build -t jkaninda/laravel-php-fpm:$tag .
+#docker build -t jkaninda/laravel-php-fpm:$tag .
+docker build -t jkaninda/php-fpm:$tag .
