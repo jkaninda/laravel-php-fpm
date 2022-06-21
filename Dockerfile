@@ -1,6 +1,7 @@
 FROM php:7.4-fpm
 ENV WORKDIR=/var/www
 ENV STORAGE_DIR=/var/www/storage
+ENV LARAVEL_PROCS_NUMBER=2
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
@@ -39,8 +40,9 @@ RUN docker-php-ext-enable rdkafka \
     && rm -rf /php-rdkafka
 
 # Install PHP extensions zip, mbstring, exif, bcmath, intl
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-configure gd
 RUN docker-php-ext-install  zip mbstring exif pcntl bcmath -j$(nproc) gd intl
+
 
 # Install Redis and enable it
 RUN pecl install redis  && docker-php-ext-enable redis
