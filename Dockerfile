@@ -1,6 +1,7 @@
 FROM php:7.2-fpm
 ENV WORKDIR=/var/www
 ENV STORAGE_DIR=/var/www/storage
+ENV LARAVEL_PROCS_NUMBER=2
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \

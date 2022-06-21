@@ -53,7 +53,7 @@ if [ -f $WORKDIR/artisan ]; then
     command=php $WORKDIR/artisan queue:work --sleep=3 --tries=3
     autostart=true
     autorestart=true
-    numprocs=2
+    numprocs=$LARAVEL_PROCS_NUMBER
     user=root
     redirect_stderr=true
     stdout_logfile=/var/log/laravel_worker.log
