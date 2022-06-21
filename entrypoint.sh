@@ -53,7 +53,7 @@ if [ -f $WORKDIR/artisan ]; then
     command=php $WORKDIR/artisan queue:work --sleep=3 --tries=3
     autostart=true
     autorestart=true
-    numprocs=2
+    numprocs=$LARAVEL_PROCS_NUMBER
     user=root
     redirect_stderr=true
     stdout_logfile=/var/log/laravel_worker.log
@@ -68,15 +68,19 @@ echo "Checking if storage directory exists"
         echo "Directory $STORAGE_DIR  exist. Fixing permissions..."
         chown -R www-data:www-data $STORAGE_DIR
         chmod -R 775 $STORAGE_DIR
-        echo  "${Green} Permissions fixed"
+        echo  "${Green}Permissions fixed"
 
     else
         echo "${Red} Directory $STORAGE_DIR does not exist"
         echo "Fixing permissions from $WORKDIR"
         chown -R www-data:www-data $WORKDIR/storage
         chmod -R 775 $WORKDIR/storage
-        echo  "${Green} Permissions fixed"
+        echo  "${Green}Permissions fixed"
     fi
 
+echo ""
+echo "**********************************"
+echo "     Starting Supervisord...     "
+echo "***********************************"
 supervisord -c /etc/supervisor/supervisord.conf
 
