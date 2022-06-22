@@ -1,6 +1,6 @@
 FROM php:7.4-fpm
-ENV WORKDIR=/var/www
-ENV STORAGE_DIR=/var/www/storage
+ENV WORKDIR=/var/www/html
+ENV STORAGE_DIR=/var/www/html/storage
 ENV LARAVEL_PROCS_NUMBER=2
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
