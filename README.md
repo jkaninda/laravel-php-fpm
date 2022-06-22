@@ -121,6 +121,7 @@ server {
         gzip_static on;
     }
 }
+```
 
 ## Advanced Laravel-php-fpm with nginx:
 ### docker-compose.yml
