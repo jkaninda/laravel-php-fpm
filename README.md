@@ -35,14 +35,12 @@
 version: '3'
 services:
     php-fpm:
-        image: jkaninda/laravel-php-fpm:<tagname> or latest
+        image: jkaninda/laravel-php-fpm:latest
         container_name: php-fpm
         restart: unless-stopped      
         volumes:
         #Project root
-            - ./:/var/www/
-            - ~/.ssh:/root/.ssh # If you use private CVS
-
+            - ./:/var/www/html
         networks:
             - default #if you're using networks between containers
 
@@ -67,15 +65,10 @@ services:
     php-fpm:
         image: jkaninda/laravel-php-fpm
         container_name: php-fpm
-        working_dir: /var/www #Optional If you want to use  a custom directory
         restart: unless-stopped     
         volumes:
         #Project root
-            - ./:/var/www/
-            - ~/.ssh:/root/.ssh # If you use private CVS
-        environment:
-           - APP_ENV=development # or production
-           - WORKDIR=/var/www #Optional If you want to use  a custom directory
+            - ./:/var/www/html
         networks:
             - default #if you're using networks between containers
     #Nginx server
@@ -86,7 +79,7 @@ services:
     ports:
       - 80:80
     volumes:
-      - ./:/var/www
+      - ./:/var/www/html
       - ./default.conf:/etc/nginx/conf.d/default.conf
     networks:
       - default
@@ -103,7 +96,7 @@ server {
     error_log  /var/log/nginx/error.log;
     access_log /var/log/nginx/access.log;
     ##Public directory
-    root /var/www/public;
+    root /var/www/html/public;
     location ~ \.php$ {
         try_files $uri =404;
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
@@ -129,7 +122,43 @@ server {
     }
 }
 
+## Advanced Laravel-php-fpm with nginx:
+### docker-compose.yml
+```yml
+version: '3'
+services:
+    php-fpm:
+        image: jkaninda/laravel-php-fpm
+        container_name: php-fpm
+        working_dir: /var/www/html #Optional, If you want to use  a custom directory
+        restart: unless-stopped     
+        volumes:
+        #Project root
+            - ./:/var/www/html
+            - ~/.ssh:/root/.ssh # If you use private CVS
+            - ./supervisord:/etc/supervisor/conf.d/ # Supervisor directory, if you want to add more supervisor process config file
+            - ./php.ini:/usr/local/etc/php/conf.d/php.ini # Optional, your custom php init file
+            -  storage-data:/var/www/html/storage/app #Optional, your custom storage data
+        environment:
+           - APP_ENV=development # Optional, or production
+           - WORKDIR=/var/www/html #Optional, If you want to use  a custom directory
+           - LARAVEL_PROCS_NUMBER=3 # Optional, Laravel queue:work process number
+    #Nginx server
+    nginx-server:
+    image: nginx:alpine
+    container_name: nginx-server
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - ./:/var/www/html
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - default
+volumes:
+ storage-data: 
 ```
+
 ## Docker run
 ```sh
  docker-compose up -d
