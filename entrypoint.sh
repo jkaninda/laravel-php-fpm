@@ -10,13 +10,9 @@ echo "***********************************************************"
 set -e
 
 ## Create PHP-FPM worker process
-TASK=/etc/supervisor/conf.d/worker.conf
+TASK=/etc/supervisor/conf.d/php-fpm.conf
 touch $TASK
 cat > "$TASK" <<EOF
-[supervisord]
-nodaemon=true
-user=root
-
 [program:php-fpm]
 command=/usr/local/sbin/php-fpm
 numprocs=1
@@ -35,9 +31,6 @@ if [ -f $WORKDIR/artisan ]; then
     TASK=/etc/supervisor/conf.d/laravel-worker.conf
     touch $TASK
     cat > "$TASK" <<EOF
-    [supervisord]
-    nodaemon=true
-    user=root
     [program:Laravel-scheduler]
     process_name=%(program_name)s_%(process_num)02d
     command=/bin/sh -c "while [ true ]; do (php $WORKDIR/artisan schedule:run --verbose --no-interaction &); sleep 60; done"
@@ -72,10 +65,16 @@ echo "Checking if storage directory exists"
 
     else
         echo "${Red} Directory $STORAGE_DIR does not exist"
-        echo "Fixing permissions from $WORKDIR"
-        chown -R www-data:www-data $WORKDIR/storage
-        chmod -R 775 $WORKDIR/storage
-        echo  "${Green}Permissions fixed"
+    fi
+
+    ## Check if the supervisor config file exists
+  if [ -f /var/www/html/conf/worker/supervisor.conf ]; then
+    echo "Custom supervisor config found"
+    cp /var/www/html/conf/worker/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
+    else
+    echo "${Red} Supervisor.conf not found"
+    echo "If you want to add more supervisor configs, create config file in /var/www/html/conf/worker/supervisor.conf"
+    echo "Start supervisor with default config..."
     fi
 
 echo ""
