@@ -165,6 +165,10 @@ volumes:
  docker-compose up -d
 
 ``` 
+## Supervisord
+### Add more supervisor process in
+> /var/www/html/conf/worker/supervisor.conf
+
 
 > P.S. please give a star if you like it :wink:
 
