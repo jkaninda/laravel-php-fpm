@@ -1,7 +1,7 @@
 FROM php:8.1-fpm
 ENV WORKDIR=/var/www/html
-ENV STORAGE_DIR=/var/www/html/storage
-ENV LARAVEL_PROCS_NUMBER=2
+ENV STORAGE_DIR=${WORKDIR}/storage
+ENV LARAVEL_PROCS_NUMBER=1
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
