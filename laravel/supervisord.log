@@ -1,9 +1,0 @@
-2022-09-05 12:32:43,589 INFO Included extra file "/etc/supervisor/conf.d/laravel-worker.conf" during parsing
-2022-09-05 12:32:43,590 INFO Set uid to user 0 succeeded
-2022-09-05 12:32:43,596 INFO supervisord started with pid 9
-2022-09-05 12:32:44,605 INFO spawned: 'php-fpm' with pid 10
-2022-09-05 12:32:44,611 INFO spawned: 'Laravel-scheduler_00' with pid 11
-2022-09-05 12:32:44,625 INFO spawned: 'Laravel-worker_00' with pid 12
-2022-09-05 12:32:45,613 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
-2022-09-05 12:32:45,614 INFO success: Laravel-scheduler_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
-2022-09-05 12:32:45,658 INFO success: Laravel-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
