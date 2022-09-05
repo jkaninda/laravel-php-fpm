@@ -10,7 +10,7 @@ set -e
 
 ## Check if the artisan file exists
 if [ -f /var/www/html/artisan ]; then
-    echo "${Green} artisan file found, creating laravel supervisor config"
+    echo "${Green} artisan file found, creating laravel supervisor config..."
     ##Create Laravel Scheduler process
     TASK=/etc/supervisor/conf.d/laravel-worker.conf
     touch $TASK
@@ -52,8 +52,14 @@ if [ -f /var/www/html/conf/worker/supervisor.conf ]; then
     echo "${Green} If you want to add more supervisor configs, create config file in /var/www/html/conf/worker/supervisor.conf"
     echo "${Green} Start supervisor with default config..."
     fi
-
-
+## Check if php.ini file exists
+if [ -f /var/www/html/conf/php/php.ini ]; then
+    cp /var/www/html/conf/php/php.ini $PHP_INI_DIR/conf.d/
+    echo "Custom php.ini file found and copied in  $PHP_INI_DIR/conf.d/"
+else
+    echo "Custom php.ini file not found"
+    echo "If you want to add a custom php.ini file, you add it in /var/www/html/conf/php/php.ini"
+fi
 
 echo ""
 echo "**********************************"

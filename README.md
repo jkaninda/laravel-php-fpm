@@ -28,6 +28,8 @@
 * Laravel Schedule
 * Laravel Envoy
 * Supervisord
+* Node
+* NPM
 
 ## Simple docker-compose usage:
 
@@ -137,13 +139,10 @@ services:
         #Project root
             - ./:/var/www/html
             - ~/.ssh:/root/.ssh # If you use private CVS
-            - ./supervisord:/etc/supervisor/conf.d/ # Supervisor directory, if you want to add more supervisor process config file
             - ./php.ini:/usr/local/etc/php/conf.d/php.ini # Optional, your custom php init file
-            -  storage-data:/var/www/html/storage/app #Optional, your custom storage data
         environment:
            - APP_ENV=development # Optional, or production
-           - WORKDIR=/var/www/html #Optional, If you want to use  a custom directory
-           - LARAVEL_PROCS_NUMBER=3 # Optional, Laravel queue:work process number
+           #- LARAVEL_PROCS_NUMBER=1 # Optional, Laravel queue:work process number
     #Nginx server
     nginx-server:
     image: nginx:alpine
@@ -166,7 +165,7 @@ volumes:
 
 ``` 
 ## Supervisord
-### Add more supervisor process in
+### Add supervisor process file in
 > /var/www/html/conf/worker/supervisor.conf
 
 
