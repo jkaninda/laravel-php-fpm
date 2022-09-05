@@ -1,7 +1,8 @@
-FROM php:8.1-fpm
-ENV WORKDIR=/var/www/html
-ENV STORAGE_DIR=${WORKDIR}/storage
+FROM php:8.1.7-fpm
+ARG WORKDIR=/var/www/html
+ENV DOCUMENT_ROOT=${WORKDIR}
 ENV LARAVEL_PROCS_NUMBER=1
+ENV NODE_VERSION=16.x
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
@@ -23,9 +24,11 @@ RUN apt-get update && apt-get install -y \
     nano \
     cron
 
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION} | bash -
+ # Install Node    
+RUN apt-get install -y nodejs
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
 # Install Kafka 
 RUN git clone https://github.com/arnaud-lb/php-rdkafka.git\
     && cd php-rdkafka \
@@ -60,13 +63,19 @@ RUN docker-php-ext-install pdo_pgsql
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-# Copy php.ini file
-COPY php.ini   $PHP_INI_DIR/conf.d/
 
 # Install Laravel Envoy
 RUN composer global require "laravel/envoy=~1.0"
+
 # Set working directory
 WORKDIR $WORKDIR
+
+RUN rm -Rf /var/www/* && \
+mkdir -p /var/www/html
+
+ADD src/index.php $WORKDIR/index.php
+ADD src/php.ini $PHP_INI_DIR/conf.d/
+ADD src/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 
 COPY ./entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
@@ -79,9 +88,8 @@ ENTRYPOINT ["entrypoint.sh"]
 RUN usermod -u 1000 www-data
 RUN groupmod -g 1000 www-data
 
-RUN chmod 755 $WORKDIR
-
-
+RUN chmod -R 755 $WORKDIR
+RUN chown -R www-data:www-data $WORKDIR
 EXPOSE 9000
-# entrypoint
 CMD [ "entrypoint" ]
+

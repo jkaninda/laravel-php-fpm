@@ -1,0 +1,23 @@
+version: '3'
+services:
+    php-fpm:
+        image: jkaninda/laravel-php-fpm:latest 
+        container_name: php-fpm
+        restart: unless-stopped     
+        volumes:
+        #Project root
+            - ./laravel:/var/www/html
+        networks:
+            - default #if you're using networks between containers
+    #Nginx server
+    nginx-server:
+     image: nginx:alpine
+     container_name: nginx-server
+     restart: unless-stopped
+     ports:
+      - 80:80
+     volumes:
+      - ./laravel:/var/www/html
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+     networks:
+      - default
