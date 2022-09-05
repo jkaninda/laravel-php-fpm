@@ -168,6 +168,9 @@ volumes:
 ### Add supervisor process file in
 > /var/www/html/conf/worker/supervisor.conf
 
+### Custom php.ini
+> /var/www/html/conf/php/php.ini
+
 
 > P.S. please give a star if you like it :wink:
 
