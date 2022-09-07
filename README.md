@@ -8,6 +8,8 @@
 > 🐳 Docker image for a PHP-FPM container crafted to run Laravel or any php based applications.
 
 - [Docker Hub](https://hub.docker.com/r/jkaninda/laravel-php-fpm)
+- [Github](https://github.com/jkaninda/laravel-php-fpm)
+
 
 ## Specifications:
 
@@ -170,6 +172,13 @@ volumes:
 
 ### Custom php.ini
 > /var/www/html/conf/php/php.ini
+
+### Storage permision issue
+> docker-compose exec php-fpm /bin/bash 
+
+> chown -R www-data:www-data /var/www/html/storage
+
+> chmod -R 775 /var/www/html/storage
 
 
 > P.S. please give a star if you like it :wink:
