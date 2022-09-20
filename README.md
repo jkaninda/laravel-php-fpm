@@ -5,7 +5,7 @@
 
 # Laravel PHP-FPM Docker image
 
-> 🐳 Docker image for a PHP-FPM container crafted to run Laravel or any php based applications.
+> 🐳 Full Docker image for a PHP-FPM container created to run Laravel or any php based applications.
 
 - [Docker Hub](https://hub.docker.com/r/jkaninda/laravel-php-fpm)
 - [Github](https://github.com/jkaninda/laravel-php-fpm)
