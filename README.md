@@ -18,6 +18,8 @@
 * OpenSSL PHP Extension
 * XML PHP Extension
 * PDO PHP Extension
+* PDO Mysql
+* PDO Pgsql
 * Rdkafka PHP Extension
 * Redis PHP Extension
 * Mbstring PHP Extension
