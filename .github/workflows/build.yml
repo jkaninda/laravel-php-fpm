@@ -3,18 +3,12 @@ name: ci
 on:
   push:
     branches:
-      - 'master'
-      - '8.1'
-      - '8.0'
-      - '7.4'
-      - '7.2'
+      - '**'
   pull_request:
+    types:
+      - closed
     branches:
-      - 'master'
-      - '8.1'
-      - '8.0'
-      - '7.4'
-      - '7.2'
+      - '**'
 
 env:
   #BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
