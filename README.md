@@ -79,15 +79,18 @@ services:
             - default #if you're using networks between containers
     #Nginx server
     nginx-server:
-    image: nginx:alpine
-    container_name: nginx-server
-    restart: unless-stopped
-    ports:
+     image: jkaninda/nginx-fpm:alpine
+     container_name: nginx-server
+     restart: unless-stopped
+     ports:
       - 80:80
-    volumes:
+     volumes:
       - ./:/var/www/html
-      - ./default.conf:/etc/nginx/conf.d/default.conf
-    networks:
+     environment:
+       - DOCUMENT_ROOT=/var/www/html/public
+       - CLIENT_MAX_BODY_SIZE=20M
+       - PHP_FPM_HOST=php-fpm:9000 
+     networks:
       - default
 
 ```
