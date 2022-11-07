@@ -1,12 +1,12 @@
 version: '3'
 services:
     php-fpm:
-        image: jkaninda/laravel-php-fpm:latest 
+        image: jkaninda/laravel-php-fpm:8.1 
         container_name: php-fpm
         restart: unless-stopped     
         volumes:
         #Project root
-            - ./laravel:/var/www/html
+            - ./:/var/www/html
         networks:
             - default #if you're using networks between containers
     #Nginx server
@@ -17,7 +17,7 @@ services:
      ports:
       - 80:80
      volumes:
-      - ./laravel:/var/www/html
+      - ./:/var/www/html
      environment:
        - DOCUMENT_ROOT=/var/www/html/public
        - CLIENT_MAX_BODY_SIZE=20M
