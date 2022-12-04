@@ -7,6 +7,8 @@
 
 > 🐳 Full Docker image for a PHP-FPM container created to run Laravel or any php based applications.
 
+> PHP Microservices ready Docker container.
+
 - [Docker Hub](https://hub.docker.com/r/jkaninda/laravel-php-fpm)
 - [Github](https://github.com/jkaninda/laravel-php-fpm)
 
@@ -79,15 +81,18 @@ services:
             - default #if you're using networks between containers
     #Nginx server
     nginx-server:
-    image: nginx:alpine
-    container_name: nginx-server
-    restart: unless-stopped
-    ports:
+     image: jkaninda/nginx-fpm:alpine
+     container_name: nginx-server
+     restart: unless-stopped
+     ports:
       - 80:80
-    volumes:
+     volumes:
       - ./:/var/www/html
-      - ./default.conf:/etc/nginx/conf.d/default.conf
-    networks:
+     environment:
+       - DOCUMENT_ROOT=/var/www/html/public
+       - CLIENT_MAX_BODY_SIZE=20M
+       - PHP_FPM_HOST=php-fpm:9000 
+     networks:
       - default
 
 ```

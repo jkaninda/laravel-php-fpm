@@ -1,8 +1,8 @@
-FROM php:8.1.10-fpm
+FROM php:8.1.11-fpm
 ARG WORKDIR=/var/www/html
 ENV DOCUMENT_ROOT=${WORKDIR}
 ENV LARAVEL_PROCS_NUMBER=1
-ENV NODE_VERSION=16.x
+ENV NODE_VERSION=17.x
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
