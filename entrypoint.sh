@@ -15,16 +15,13 @@ if [ -f /var/www/html/artisan ]; then
     TASK=/etc/supervisor/conf.d/laravel-worker.conf
     touch $TASK
     cat > "$TASK" <<EOF
-    [supervisord]
-    nodaemon=true
-    user=root
     [program:Laravel-scheduler]
     process_name=%(program_name)s_%(process_num)02d
     command=/bin/sh -c "while [ true ]; do (php /var/www/html/artisan schedule:run --verbose --no-interaction &); sleep 60; done"
     autostart=true
     autorestart=true
     numprocs=1
-    user=root
+    user=www-data
     stdout_logfile=/var/log/laravel_scheduler.out.log
     redirect_stderr=true
     
@@ -34,7 +31,7 @@ if [ -f /var/www/html/artisan ]; then
     autostart=true
     autorestart=true
     numprocs=$LARAVEL_PROCS_NUMBER
-    user=root
+    user=www-data
     redirect_stderr=true
     stdout_logfile=/var/log/laravel_worker.log
 EOF
