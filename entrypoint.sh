@@ -15,9 +15,6 @@ if [ -f /var/www/html/artisan ]; then
     TASK=/etc/supervisor/conf.d/laravel-worker.conf
     touch $TASK
     cat > "$TASK" <<EOF
-    [supervisord]
-    nodaemon=true
-    user=www-data
     [program:Laravel-scheduler]
     process_name=%(program_name)s_%(process_num)02d
     command=/bin/sh -c "while [ true ]; do (php /var/www/html/artisan schedule:run --verbose --no-interaction &); sleep 60; done"
