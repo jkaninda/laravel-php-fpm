@@ -1,28 +1,15 @@
-name: Docker image build and Push Image to registry
-
+name: Build
 on:
   push:
     branches:
-      - '**'
+      - master
 
 env:
-  #BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
   BUILDKIT_IMAGE: jkaninda/laravel-php-fpm
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - 
-        name: Set environment for branch
-        run: |
-          set -x
-          if [[ $GITHUB_REF == 'refs/heads/master' ]]; then
-            echo "TAG_NAME=latest" >> "$GITHUB_ENV"
-            echo "runs-on: master branch"
-          else
-            echo "TAG_NAME=${{ github.head_ref || github.ref_name }}" >> "$GITHUB_ENV"
-            echo "runs-on: ${{ github.head_ref || github.ref_name }} branch"
-          fi
       - 
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -36,8 +23,32 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
-        name: Build and push
+        name: Build and push 7.4
         uses: docker/build-push-action@v3
         with:
+          file: "./docker/7.4/Dockerfile"
           push: true
-          tags: "${{env.BUILDKIT_IMAGE}}:${{env.TAG_NAME}}"
+          tags: "${{env.BUILDKIT_IMAGE}}:7.4"
+      -
+        name: Build and push 8.0
+        uses: docker/build-push-action@v3
+        with:
+          file: "./docker/8.0/Dockerfile"
+          push: true
+          tags: "${{env.BUILDKIT_IMAGE}}:8.0"
+      -
+        name: Build and push 8.1
+        uses: docker/build-push-action@v3
+        with:
+          file: "./docker/8.1/Dockerfile"
+          push: true
+          tags: "${{env.BUILDKIT_IMAGE}}:8.1"
+      -
+        name: Build and push 8.2
+        uses: docker/build-push-action@v3
+        with:
+          file: "./docker/8.2/Dockerfile"
+          push: true
+          tags: |
+           "${{env.BUILDKIT_IMAGE}}:8.2"
+           "${{env.BUILDKIT_IMAGE}}:latest"
