@@ -1,5 +1,4 @@
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/jkaninda/laravel-php-fpm?style=flat-square)
-![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/jkaninda/laravel-php-fpm?style=flat-square)
+[![Build](https://github.com/jkaninda/laravel-php-fpm/actions/workflows/build.yml/badge.svg)](https://github.com/jkaninda/laravel-php-fpm/actions/workflows/build.yml)
 ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/jkaninda/laravel-php-fpm?style=flat-square)
 ![Docker Pulls](https://img.shields.io/docker/pulls/jkaninda/laravel-php-fpm?style=flat-square)
 
@@ -173,6 +172,25 @@ volumes:
  docker-compose up -d
 
 ``` 
+## Build from base
+Dockerfile
+```Dockerfile
+FROM jkaninda/laravel-php-fpm:8.1
+# Copy laravel project files
+COPY . /var/www/html
+# Storage Volume
+VOLUME /var/www/html/storage
+
+WORKDIR /var/www/html
+
+# Custom cache invalidation
+ARG CACHEBUST=1
+RUN composer install
+
+RUN chown -R www-data:www-data /var/www/html/storage
+RUN chown -R www-data:www-data /var/www/html/bootstrap/cache
+
+```
 ## Supervisord
 ### Add supervisor process file in
 > /var/www/html/conf/worker/supervisor.conf
