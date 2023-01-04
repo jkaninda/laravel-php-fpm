@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - main
+      - master
 
 env:
   BUILDKIT_IMAGE: jkaninda/laravel-php-fpm
