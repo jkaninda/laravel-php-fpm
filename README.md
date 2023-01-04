@@ -175,7 +175,7 @@ volumes:
 ## Build from base
 Dockerfile
 ```Dockerfile
-FROM jkaninda/nginx-php-fpm:8.1
+FROM jkaninda/laravel-php-fpm:8.1
 # Copy laravel project files
 COPY . /var/www/html
 # Storage Volume
