@@ -1,8 +1,10 @@
-FROM php:8.1.11-fpm
+FROM php:8.1.13-fpm
 ARG WORKDIR=/var/www/html
 ENV DOCUMENT_ROOT=${WORKDIR}
 ENV LARAVEL_PROCS_NUMBER=1
 ENV NODE_VERSION=17.x
+ARG HOST_UID=1000
+ENV USER=www-data
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
@@ -81,9 +83,8 @@ RUN ln -s /usr/local/bin/entrypoint.sh /
 ENTRYPOINT ["entrypoint.sh"]
 
 
-
-RUN usermod -u 1000 www-data
-RUN groupmod -g 1000 www-data
+RUN usermod -u ${HOST_UID} www-data
+RUN groupmod -g ${HOST_UID} www-data
 
 RUN chmod -R 755 $WORKDIR
 RUN chown -R www-data:www-data $WORKDIR

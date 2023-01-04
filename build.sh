@@ -11,7 +11,7 @@ then
   docker build -f docker/${tag}/Dockerfile -t jkaninda/laravel-php-fpm:$tag .
 else
  echo 'Build latest'
- docker build -f docker/8.1/Dockerfile -t jkaninda/laravel-php-fpm:$tag .
+ docker build -f docker/8.2/Dockerfile -t jkaninda/laravel-php-fpm:$tag .
  
 fi
 

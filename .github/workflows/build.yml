@@ -1,32 +1,15 @@
-name: Docker build
-
+name: Build
 on:
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-    inputs:
-      docker_tag:
-        description: 'Docker tag'
-        required: true
-        default: 'latest' 
-        type: string
+  push:
+    branches:
+      - main
 
 env:
-  #BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
   BUILDKIT_IMAGE: jkaninda/laravel-php-fpm
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - 
-        name: Set environment for branch
-        run: |
-          set -x
-          if [[ ${{ inputs.docker_tag }} == 'latest' ]]; then
-            TAG_NAME=8.1
-            echo "Build latest tag'"
-          else
-            TAG_NAME=${{ inputs.docker_tag }}
-          fi
       - 
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -40,10 +23,32 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
-        name: Build and push
+        name: Build and push 7.4
         uses: docker/build-push-action@v3
         with:
-          context: ./
-          file: "./docker/${{TAG_NAME}}/Dockerfile"
+          file: "./docker/7.4/Dockerfile"
           push: true
-          tags: "${{env.BUILDKIT_IMAGE}}:${{env.TAG_NAME}}"
+          tags: "${{env.BUILDKIT_IMAGE}}:7.4"
+      -
+        name: Build and push 8.0
+        uses: docker/build-push-action@v3
+        with:
+          file: "./docker/8.0/Dockerfile"
+          push: true
+          tags: "${{env.BUILDKIT_IMAGE}}:8.0"
+      -
+        name: Build and push 8.1
+        uses: docker/build-push-action@v3
+        with:
+          file: "./docker/8.1/Dockerfile"
+          push: true
+          tags: "${{env.BUILDKIT_IMAGE}}:8.1"
+      -
+        name: Build and push 8.2
+        uses: docker/build-push-action@v3
+        with:
+          file: "./docker/8.2/Dockerfile"
+          push: true
+          tags: |
+           "${{env.BUILDKIT_IMAGE}}:8.2"
+           "${{env.BUILDKIT_IMAGE}}:latest"
