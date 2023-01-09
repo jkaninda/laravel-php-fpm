@@ -1,9 +1,13 @@
-name: Build
+name: Build-manually
 on:
-  push:
-    branches:
-      - master
-
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      docker_tag:
+        description: 'Docker tag'
+        required: true
+        default: 'latest' 
+        type: string
 env:
   BUILDKIT_IMAGE: jkaninda/laravel-php-fpm
 jobs:
@@ -48,6 +52,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           file: "./src/docker/8.0/Dockerfile"
+          #platforms: linux/amd64,linux/arm64
           push: true
           tags: "${{env.BUILDKIT_IMAGE}}:8.0"
       -
@@ -55,6 +60,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           file: "./src/docker/8.1/Dockerfile"
+          #platforms: linux/amd64,linux/arm64
           push: true
           tags: "${{env.BUILDKIT_IMAGE}}:8.1"
       -
@@ -62,6 +68,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           file: "./src/docker/8.2/Dockerfile"
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
            "${{env.BUILDKIT_IMAGE}}:8.2"

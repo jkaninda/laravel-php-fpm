@@ -76,7 +76,7 @@ ADD src/index.php $WORKDIR/index.php
 ADD src/php.ini $PHP_INI_DIR/conf.d/
 ADD src/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 
-COPY ./entrypoint.sh /usr/local/bin/
+COPY src/entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
 RUN ln -s /usr/local/bin/entrypoint.sh /
 
