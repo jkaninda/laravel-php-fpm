@@ -1,4 +1,4 @@
-name: Build-manually
+name: Manual-build
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -25,13 +25,47 @@ jobs:
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }} 
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push 7.2
+        uses: docker/build-push-action@v3
+        with:
+          file: "./src/docker/7.2/Dockerfile"
+          push: true
+          tags: "${{env.BUILDKIT_IMAGE}}:7.2"
+      -
+        name: Build and push 7.3
+        uses: docker/build-push-action@v3
+        with:
+          file: "./src/docker/7.3/Dockerfile"
+          push: true
+          tags: "${{env.BUILDKIT_IMAGE}}:7.3"
+      -
+        name: Build and push 7.4
+        uses: docker/build-push-action@v3
+        with:
+          file: "./src/docker/7.4/Dockerfile"
+          push: true
+          tags: "${{env.BUILDKIT_IMAGE}}:7.4"
+      -
+        name: Build and push 8.0
+        uses: docker/build-push-action@v3
+        with:
+          file: "./src/docker/8.0/Dockerfile"
+          push: true
+          tags: "${{env.BUILDKIT_IMAGE}}:8.0"
+      -
+        name: Build and push 8.1
+        uses: docker/build-push-action@v3
+        with:
+          file: "./src/docker/8.1/Dockerfile"
+          push: true
+          tags: "${{env.BUILDKIT_IMAGE}}:8.1"
       -
         name: Build and push 8.2
         uses: docker/build-push-action@v3
         with:
           file: "./src/docker/8.2/Dockerfile"
-          platforms: linux/arm64
           push: true
           tags: |
            "${{env.BUILDKIT_IMAGE}}:8.2"
