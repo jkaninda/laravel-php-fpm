@@ -58,6 +58,11 @@ services:
 docker-compose exec php-fpm /bin/bash
 
 ```
+```
+Default web root:
+```
+/var/www/html
+```
 
 ### Laravel migration
 ```sh
