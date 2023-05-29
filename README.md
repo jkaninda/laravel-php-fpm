@@ -6,7 +6,7 @@
 
 > 🐳 Full Docker image for a PHP-FPM container created to run Laravel or any php based applications.
 
-> PHP Microservices ready Docker container.
+> PHP Microservices ready Docker container image.
 
 - [Docker Hub](https://hub.docker.com/r/jkaninda/laravel-php-fpm)
 - [Github](https://github.com/jkaninda/laravel-php-fpm)
@@ -58,7 +58,7 @@ services:
 docker-compose exec php-fpm /bin/bash
 
 ```
-```
+
 Default web root:
 ```
 /var/www/html
