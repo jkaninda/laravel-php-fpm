@@ -22,13 +22,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -   
-        name: Build and push 7.4
-        uses: docker/build-push-action@v3
-        with:
-          file: "./src/docker/7.4/Dockerfile"
-          push: true
-          tags: "${{env.BUILDKIT_IMAGE}}:7.4"
       -
         name: Build and push 8.0
         uses: docker/build-push-action@v3
