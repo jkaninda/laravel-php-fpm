@@ -53,6 +53,7 @@ jobs:
         with:
           file: "./src/docker/8.0/Dockerfile"
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: "${{env.BUILDKIT_IMAGE}}:8.0"
       -
         name: Build and push 8.1
@@ -72,6 +73,15 @@ jobs:
           tags: |
            "${{env.BUILDKIT_IMAGE}}:8.2"
            "${{env.BUILDKIT_IMAGE}}:latest"
+      -
+        name: Build and push 8.1 alpine
+        uses: docker/build-push-action@v3
+        with:
+          file: "./src/docker/8.1/Dockerfile.alpine"
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+           "${{env.BUILDKIT_IMAGE}}:8.1-alpine"
       -
         name: Build and push 8.2 alpine
         uses: docker/build-push-action@v3
