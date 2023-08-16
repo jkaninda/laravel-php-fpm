@@ -1,7 +1,7 @@
 version: '3'
 services:
     php-fpm:
-        image: jkaninda/laravel-php-fpm:8.1 
+        image: jkaninda/laravel-php-fpm
         container_name: php-fpm
         restart: unless-stopped     
         volumes:
@@ -17,6 +17,7 @@ services:
      ports:
       - 80:80
      volumes:
+     #Project root
       - ./:/var/www/html
      environment:
        - DOCUMENT_ROOT=/var/www/html/public
