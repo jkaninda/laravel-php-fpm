@@ -29,6 +29,7 @@
 * GD PHP Extension
 * BCMath PHP Extension
 * Memcached
+* Opcache
 * Laravel Cron Job
 * Laravel Schedule
 * Laravel Envoy

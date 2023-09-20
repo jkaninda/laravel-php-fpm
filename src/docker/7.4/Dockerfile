@@ -62,6 +62,8 @@ RUN docker-php-ext-install pdo_mysql
 # Install the PHP pdo_pgsql extention
 RUN docker-php-ext-install pdo_pgsql
 
+# Install PHP Opcache extention
+RUN docker-php-ext-install opcache
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -74,6 +76,8 @@ mkdir -p /var/www/html
 
 ADD src/index.php $WORKDIR/index.php
 ADD src/php.ini $PHP_INI_DIR/conf.d/
+ADD src/opcache.ini $PHP_INI_DIR/conf.d/
+
 ADD src/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 
 COPY src/entrypoint.sh /usr/local/bin/
