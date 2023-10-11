@@ -65,3 +65,12 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: |
            "${{env.BUILDKIT_IMAGE}}:8.2-alpine"
+      -
+        name: Build and push 8.3 0RC3
+        uses: docker/build-push-action@v3
+        with:
+          file: "./src/docker/8.3/Dockerfile"
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+           "${{env.BUILDKIT_IMAGE}}:8.3.0RC3"
