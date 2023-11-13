@@ -205,6 +205,7 @@ RUN chown -R www-data:www-data /var/www/html/bootstrap/cache
 ## Supervisord
 ### Add supervisor process in
 > /var/www/html/conf/worker/supervisor.conf
+
 In case you want to execute and maintain a task or process with supervisor
 ### Example:
 ```conf
