@@ -206,7 +206,9 @@ RUN chown -R www-data:www-data /var/www/html/bootstrap/cache
 ### Add supervisor process in
 > /var/www/html/conf/worker/supervisor.conf
 
-In case you want to execute and maintain a task or process with supervisor
+In case you want to execute and maintain a task or process with supervisor.
+
+Find below an example with Apache Kafka, when you want to maintain a consumer process.
 ### Example:
 ```conf
 [program:kafkaconsume-worker]
