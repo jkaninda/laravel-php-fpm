@@ -153,7 +153,6 @@ services:
     php-fpm:
         image: jkaninda/laravel-php-fpm
         container_name: php-fpm
-        working_dir: /var/www/html #Optional, If you want to use  a custom directory
         restart: unless-stopped     
         volumes:
         #Project root
@@ -187,7 +186,7 @@ volumes:
 ## Build from base
 Dockerfile
 ```Dockerfile
-FROM jkaninda/laravel-php-fpm:8.1
+FROM jkaninda/laravel-php-fpm:8.2
 # Copy laravel project files
 COPY . /var/www/html
 # Storage Volume
@@ -204,8 +203,22 @@ RUN chown -R www-data:www-data /var/www/html/bootstrap/cache
 
 ```
 ## Supervisord
-### Add supervisor process file in
+### Add supervisor process in
 > /var/www/html/conf/worker/supervisor.conf
+
+In case you want to execute and maintain a task or process with supervisor
+### Example:
+```conf
+[program:kafkaconsume-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/html/artisan kafka:consumer
+autostart=true
+autorestart=true
+numprocs=1
+user=www-data
+redirect_stderr=true
+stdout_logfile=/var/www/html/storage/logs/kafka.log
+```
 
 ### Custom php.ini
 > /var/www/html/conf/php/php.ini
