@@ -1,4 +1,4 @@
-FROM php:8.3-rc-fpm
+FROM php:8.3.0-fpm
 ARG WORKDIR=/var/www/html
 ENV DOCUMENT_ROOT=${WORKDIR}
 ENV LARAVEL_PROCS_NUMBER=1
