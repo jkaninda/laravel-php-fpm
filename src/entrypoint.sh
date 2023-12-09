@@ -3,7 +3,7 @@ Red='\033[0;31m'          # Red
 Green='\033[0;32m'        # Green
 echo ""
 echo "***********************************************************"
-echo " Starting LARAVEL PHP-FPM Docker Container                 "
+echo "   Starting LARAVEL PHP-FPM Container                      "
 echo "***********************************************************"
 
 set -e

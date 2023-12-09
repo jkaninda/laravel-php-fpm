@@ -1,4 +1,5 @@
 [![Build](https://github.com/jkaninda/laravel-php-fpm/actions/workflows/build.yml/badge.svg)](https://github.com/jkaninda/laravel-php-fpm/actions/workflows/build.yml)
+[![Integration Test](https://github.com/jkaninda/laravel-php-fpm/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/jkaninda/laravel-php-fpm/actions/workflows/integration-tests.yml)
 ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/jkaninda/laravel-php-fpm?style=flat-square)
 ![Docker Pulls](https://img.shields.io/docker/pulls/jkaninda/laravel-php-fpm?style=flat-square)
 
