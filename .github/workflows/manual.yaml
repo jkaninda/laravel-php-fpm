@@ -1,6 +1,5 @@
 name: Manual-build
 on:
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
       docker_tag:
@@ -16,44 +15,22 @@ jobs:
     steps:
       - 
         name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       - 
         name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - 
         name: Login to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Build and push 7.2
-        uses: docker/build-push-action@v3
-        with:
-          file: "./src/docker/7.2/Dockerfile"
-          push: true
-          tags: "${{env.BUILDKIT_IMAGE}}:7.2"
-      -
-        name: Build and push 7.3
-        uses: docker/build-push-action@v3
-        with:
-          file: "./src/docker/7.3/Dockerfile"
-          push: true
-          tags: "${{env.BUILDKIT_IMAGE}}:7.3"
-      -
-        name: Build and push 7.4
-        uses: docker/build-push-action@v3
-        with:
-          file: "./src/docker/7.4/Dockerfile"
-          push: true
-          tags: "${{env.BUILDKIT_IMAGE}}:7.4"
       -
         name: Build and push 8.0
         uses: docker/build-push-action@v3
         with:
           file: "./src/docker/8.0/Dockerfile"
           push: true
-          platforms: linux/amd64,linux/arm64
           tags: "${{env.BUILDKIT_IMAGE}}:8.0"
       -
         name: Build and push 8.1
@@ -90,23 +67,21 @@ jobs:
           tags: |
            "${{env.BUILDKIT_IMAGE}}:8.2-alpine"
       -
-            name: Build and push 8.3 alpine
-            uses: docker/build-push-action@v3
-            with:
-              file: "./src/docker/8.3/Dockerfile.alpine"
-              push: true
-              platforms: linux/amd64,linux/arm64
-              tags: |
-               "${{env.BUILDKIT_IMAGE}}:8.3-alpine"
+        name: Build and push 8.3 alpine
+        uses: docker/build-push-action@v3
+        with:
+          file: "./src/docker/8.3/Dockerfile.alpine"
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+           "${{env.BUILDKIT_IMAGE}}:8.3-alpine"
       -
-            name: Build and push 8.3
-            uses: docker/build-push-action@v3
-            with:
-              file: "./src/docker/8.3/Dockerfile"
-              push: true
-              platforms: linux/amd64,linux/arm64
-              tags: |
-               "${{env.BUILDKIT_IMAGE}}:8.3.0-fpm"
-               "${{env.BUILDKIT_IMAGE}}:latest"
-    
-    
+        name: Build and push 8.3
+        uses: docker/build-push-action@v3
+        with:
+          file: "./src/docker/8.3/Dockerfile"
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+           "${{env.BUILDKIT_IMAGE}}:8.3"
+           "${{env.BUILDKIT_IMAGE}}:latest"
