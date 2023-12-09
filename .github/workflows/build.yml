@@ -80,5 +80,6 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-           "${{env.BUILDKIT_IMAGE}}:8.3.0-fpm"
+           "${{env.BUILDKIT_IMAGE}}:8.3.0"
+           "${{env.BUILDKIT_IMAGE}}:8.3"
            "${{env.BUILDKIT_IMAGE}}:latest"

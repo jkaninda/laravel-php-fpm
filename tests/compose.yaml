@@ -1,0 +1,40 @@
+version: '3'
+services:
+    mysql:
+      image: mysql:8.0
+      container_name: mysql
+      restart: unless-stopped
+      environment:
+        MYSQL_DATABASE: php
+        MYSQL_ROOT_PASSWORD: password
+        MYSQL_PASSWORD: password
+        MYSQL_USER: php
+      ports:
+       - 3306:3306
+    php-fpm:
+        image: jkaninda/laravel-php-fpm:latest
+        container_name: php-fpm
+        restart: unless-stopped
+        depends_on:
+         - mysql
+        environment:
+          DB_HOST: mysql
+          DB_PORT: 3306
+          DB_DATABASE: php
+          DB_USERNAME: php
+          DB_PASSWORD: password
+        volumes:
+            - ./laravel:/var/www/html
+     #Nginx server
+    nginx-server:
+     image: jkaninda/nginx-fpm:stable
+     container_name: nginx-server
+     restart: unless-stopped
+     ports:
+      - 80:80
+     volumes:
+      - ./laravel:/var/www/html
+     environment:
+       - DOCUMENT_ROOT=/var/www/html/public
+       - CLIENT_MAX_BODY_SIZE=20M
+       - PHP_FPM_HOST=php-fpm:9000
