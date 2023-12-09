@@ -1,0 +1,38 @@
+name: Integration Test
+on:
+  push:
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create Laravel project
+        run: |
+         composer create-project laravel/laravel laravel
+      - name: Fix Permission
+        run: chmod -R 777 ./laravel/storage
+      - name: Run docker-compose
+        run: 
+          cp ./tests/compose.yaml compose.yaml &&
+          docker-compose -f "compose.yaml" up -d
+      - name: Create script.js for K6 test
+        run: |
+          touch script.js && cat > script.js <<EOF
+          import http from 'k6/http';
+          import { sleep } from 'k6';
+      
+          export default function () {
+            //Link
+            http.get('http://localhost');
+          }
+          EOF
+      - name: Install k6
+        run: |
+            curl https://github.com/grafana/k6/releases/download/v0.47.0/k6-v0.47.0-linux-amd64.tar.gz -L | tar xvz --strip-components 1
+      - name: Test with K6
+        run: |
+           ./k6 run script.js
+      - name: Test with curl
+        run: |
+            curl -i http://localhost
+
