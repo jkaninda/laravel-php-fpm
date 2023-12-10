@@ -35,4 +35,13 @@ jobs:
       - name: Test with curl
         run: |
             curl -i http://localhost
+      - name: Waiting for database connection
+        run: |
+            while ! docker exec mysql mysql --user=root --password=password -e "status" &> /dev/null ; do
+              echo "Waiting for database connection..."
+              sleep 5
+            done
+      - name: Laravel database migration test
+        run: |
+          docker exec php-fpm php artisan migrate
 
