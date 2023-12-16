@@ -57,6 +57,7 @@ else
     echo "Custom php.ini file not found"
     echo "If you want to add a custom php.ini file, you add it in /var/www/html/conf/php/php.ini"
 fi
+chown -R www-data:www-data /var/www/html
 
 echo ""
 echo "**********************************"
