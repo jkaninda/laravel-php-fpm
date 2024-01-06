@@ -15,6 +15,7 @@ services:
         image: jkaninda/laravel-php-fpm:latest
         container_name: php-fpm
         restart: unless-stopped
+        user: www-data #Use www-data user  production usage
         depends_on:
          - mysql
         environment:

@@ -2,8 +2,10 @@ FROM php:8.2-fpm-alpine
 ARG WORKDIR=/var/www/html
 ENV DOCUMENT_ROOT=${WORKDIR}
 ENV LARAVEL_PROCS_NUMBER=1
-ARG HOST_UID=1000
-ENV USER=www-data
+ARG GROUP_ID=1000
+ARG USER_ID=1000
+ENV USER_NAME=www-data
+ARG GROUP_NAME=www-data
 
 # Install the PHP pdo_mysql extention
 RUN docker-php-ext-install pdo_mysql
