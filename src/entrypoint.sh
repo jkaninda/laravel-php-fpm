@@ -70,4 +70,4 @@ else
 fi
 
 supervisord -c /etc/supervisor/supervisord.conf
-exec "$@"
+#exec "$@"

@@ -3,6 +3,12 @@
 ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/jkaninda/laravel-php-fpm?style=flat-square)
 ![Docker Pulls](https://img.shields.io/docker/pulls/jkaninda/laravel-php-fpm?style=flat-square)
 
+<p align="center">
+  <a href="https://github.com/jkaninda/laravel-php-fpm">
+    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Logo">
+  </a>
+  </p>
+
 # Laravel PHP-FPM Docker image
 
 > 🐳 Full Docker image for a PHP-FPM container created to run Laravel or any php based applications.
