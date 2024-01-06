@@ -52,7 +52,8 @@ services:
     php-fpm:
         image: jkaninda/laravel-php-fpm:latest
         container_name: php-fpm
-        restart: unless-stopped      
+        restart: unless-stopped
+        user: www-data #Use www-data user  production usage     
         volumes:
         #Project root
             - ./:/var/www/html

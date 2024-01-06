@@ -3,8 +3,10 @@ ARG WORKDIR=/var/www/html
 ENV DOCUMENT_ROOT=${WORKDIR}
 ENV LARAVEL_PROCS_NUMBER=1
 ENV NODE_VERSION=17.x
-ARG HOST_UID=1000
-ENV USER=www-data
+ARG GROUP_ID=1000
+ARG USER_ID=1000
+ENV USER_NAME=www-data
+ARG GROUP_NAME=www-data
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
@@ -85,13 +87,15 @@ COPY src/entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
 RUN ln -s /usr/local/bin/entrypoint.sh /
 
+
 ENTRYPOINT ["entrypoint.sh"]
 
+RUN usermod -u ${USER_ID} ${USER_NAME}
+RUN groupmod -g ${USER_ID} ${GROUP_NAME}
+RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/www && \
+  chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
+  chown -R ${USER_NAME}:${GROUP_NAME} /etc/supervisor/conf.d/ && \
+  chown -R ${USER_NAME}:${GROUP_NAME} $PHP_INI_DIR/conf.d/
 
-RUN usermod -u ${HOST_UID} www-data
-RUN groupmod -g ${HOST_UID} www-data
-
-RUN chmod -R 755 $WORKDIR
-RUN chown -R www-data:www-data $WORKDIR
 EXPOSE 9000
 CMD [ "entrypoint" ]
