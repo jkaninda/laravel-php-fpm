@@ -76,7 +76,7 @@ docker compose exec php-fpm /bin/bash
 
 ## Configurations
 
-- Superfisor config folder: /etc/supervisor/conf.d/
+- Supervisor config folder: /etc/supervisor/conf.d/
 - PHP ini config foler /usr/local/etc/php/conf.d/
 
 ## Example Laravel-php-fpm with nginx:
