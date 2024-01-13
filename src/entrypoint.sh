@@ -51,15 +51,6 @@ else
     info "artisan file not found"
 fi
 
-## Check if the supervisor config file exists
-if [ -f /var/www/html/conf/worker/supervisor.conf ]; then
-    info "additional supervisor config found"
-    cp /var/www/html/conf/worker/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
-    else
-    info "Supervisor.conf not found"
-    info "If you want to add more supervisor configs, create config file in /var/www/html/conf/worker/supervisor.conf"
-    info "Start supervisor with default config..."
-    fi
 ## Check if php.ini file exists
 if [ -f /var/www/html/conf/php/php.ini ]; then
     cp /var/www/html/conf/php/php.ini $PHP_INI_DIR/conf.d/
@@ -70,4 +61,3 @@ else
 fi
 
 supervisord -c /etc/supervisor/supervisord.conf
-#exec "$@"

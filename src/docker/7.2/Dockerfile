@@ -92,7 +92,8 @@ RUN groupmod -g ${USER_ID} ${GROUP_NAME}
 RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/www && \
   chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
   chown -R ${USER_NAME}:${GROUP_NAME} /etc/supervisor/conf.d/ && \
-  chown -R ${USER_NAME}:${GROUP_NAME} $PHP_INI_DIR/conf.d/
+  chown -R ${USER_NAME}:${GROUP_NAME} $PHP_INI_DIR/conf.d/ && \
+  chown -R ${USER_NAME}:${GROUP_NAME} /tmp
   
 EXPOSE 9000
 CMD [ "entrypoint" ]
