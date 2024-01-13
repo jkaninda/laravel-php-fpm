@@ -70,20 +70,15 @@ services:
 ## Laravel `artisan` command usage:
 ### Open php-fpm
 ```sh
-docker-compose exec php-fpm /bin/bash
+docker compose exec php-fpm /bin/bash
 
 ```
 
-Default web root:
-```
-/var/www/html
-```
+## Configurations
 
-### Laravel migration
-```sh
-php atisan  migrate
+- Superfisor config folder: /etc/supervisor/conf.d/
+- PHP ini config foler /usr/local/etc/php/conf.d/
 
-```
 ## Example Laravel-php-fpm with nginx:
 ### docker-compose.yml
 ```yml
@@ -192,6 +187,7 @@ volumes:
 
 ``` 
 ## Build from base
+
 Dockerfile
 ```Dockerfile
 FROM jkaninda/laravel-php-fpm:8.3
@@ -212,7 +208,8 @@ RUN chown -R www-data:www-data /var/www/html
 ```
 ## Supervisord
 ### Add supervisor process in
-> /var/www/html/conf/worker/supervisor.conf
+
+> /etc/supervisor/conf.d/
 
 In case you want to execute and maintain a task or process with supervisor.
 
@@ -235,7 +232,7 @@ stdout_logfile=/var/www/html/storage/logs/kafka.log
 
 ### Storage permision issue
 ```sh
- docker-compose exec php-fpm /bin/bash 
+ docker compose exec php-fpm /bin/bash 
  ```
 
 ```sh
