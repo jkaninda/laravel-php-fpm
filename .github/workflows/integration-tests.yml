@@ -14,7 +14,7 @@ jobs:
       - name: Run docker-compose
         run: 
           cp ./tests/compose.yaml compose.yaml &&
-          docker-compose -f "compose.yaml" up -d
+          docker compose -f "compose.yaml" up -d
       - name: Create script.js for K6 test
         run: |
           touch script.js && cat > script.js <<EOF
