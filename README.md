@@ -62,15 +62,39 @@ services:
         user: www-data #Use www-data user for production usage     
         volumes:
         #Project root
-            - ./:/var/www/html
+            - ./src:/var/www/html
         networks:
             - default #if you're using networks between containers
 
 ```
-## Laravel `artisan` command usage:
-### Open php-fpm
+## Docker:
+### Run
 ```sh
-docker compose exec php-fpm /bin/bash
+ docker compose up -d
+```
+### Create Laravel project
+```sh
+docker compose exec php-fpm composer create-project --prefer-dist laravel/laravel .
+```
+### Artisan generate key
+```sh
+docker compose exec php-fpm php artisan key:generate
+```
+### Storage link
+```sh
+docker compose exec php-fpm php artisan storage:link
+```
+### Fix permissions
+```sh
+docker compose exec php-fpm chmod -R 777 storage bootstrap/cache
+```
+### Laravel migration
+```sh
+ docker compose exec php-fpm php artisan migrate
+```
+### 
+```sh
+docker exec -it php-fpm bash
 
 ```
 
@@ -82,7 +106,6 @@ docker compose exec php-fpm /bin/bash
 ## Example Laravel-php-fpm with nginx:
 ### docker-compose.yml
 ```yml
-version: '3'
 services:
     php-fpm:
         image: jkaninda/laravel-php-fpm
@@ -151,7 +174,6 @@ server {
 ## Advanced Laravel-php-fpm with nginx:
 ### docker-compose.yml
 ```yml
-version: '3'
 services:
     php-fpm:
         image: jkaninda/laravel-php-fpm
@@ -183,7 +205,7 @@ volumes:
 
 ## Docker run
 ```sh
- docker-compose up -d
+ docker compose up -d
 
 ``` 
 ## Build from base
