@@ -1,4 +1,5 @@
-FROM php:8.3-fpm-alpine
+ARG phpVersion=8.3-dev
+FROM php:${phpVersion}-fpm-alpine
 ARG WORKDIR=/var/www/html
 ENV DOCUMENT_ROOT=${WORKDIR}
 ENV LARAVEL_PROCS_NUMBER=1
