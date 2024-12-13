@@ -7,8 +7,6 @@ on:
         required: true
         default: 'latest' 
         type: string
-env:
-  BUILDKIT_IMAGE: jkaninda/laravel-php-fpm
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -31,78 +29,110 @@ jobs:
         with:
           file: "./src/docker/7.2/Dockerfile"
           push: true
-          tags: "${{env.BUILDKIT_IMAGE}}:7.2"
+          tags: "${{vars.BUILDKIT_IMAGE}}:7.2"
       -
         name: Build and push 7.3
         uses: docker/build-push-action@v3
         with:
           file: "./src/docker/7.3/Dockerfile"
           push: true
-          tags: "${{env.BUILDKIT_IMAGE}}:7.3"
+          tags: "${{vars.BUILDKIT_IMAGE}}:7.3"
       -
         name: Build and push 7.4
         uses: docker/build-push-action@v3
         with:
           file: "./src/docker/7.4/Dockerfile"
           push: true
-          tags: "${{env.BUILDKIT_IMAGE}}:7.4"
+          tags: "${{vars.BUILDKIT_IMAGE}}:7.4"
       -
         name: Build and push 8.0
         uses: docker/build-push-action@v3
         with:
           file: "./src/docker/8.0/Dockerfile"
           push: true
-          tags: "${{env.BUILDKIT_IMAGE}}:8.0"
+          tags: "${{vars.BUILDKIT_IMAGE}}:8.0"
       -
         name: Build and push 8.1
         uses: docker/build-push-action@v3
         with:
-          file: "./src/docker/8.1/Dockerfile"
+          file: "./src/docker/Dockerfile"
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: "${{env.BUILDKIT_IMAGE}}:8.1"
-      -
-        name: Build and push 8.2
-        uses: docker/build-push-action@v3
-        with:
-          file: "./src/docker/8.2/Dockerfile"
-          push: true
-          platforms: linux/amd64,linux/arm64
-          tags: "${{env.BUILDKIT_IMAGE}}:8.2"
+          build-args: |
+            phpVersion=8.1
+          tags: "${{ vars.BUILDKIT_IMAGE }}:8.1"
       -
         name: Build and push 8.1 alpine
         uses: docker/build-push-action@v3
         with:
-          file: "./src/docker/8.1/Dockerfile.alpine"
+          file: "./src/docker/Dockerfile.alpine"
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: |
-           "${{env.BUILDKIT_IMAGE}}:8.1-alpine"
+          build-args: |
+            phpVersion=8.1
+          tags: "${{ vars.BUILDKIT_IMAGE }}:8.1-alpine"
+      -
+        name: Build and push 8.2
+        uses: docker/build-push-action@v3
+        with:
+          file: "./src/docker/Dockerfile"
+          push: true
+          platforms: linux/amd64,linux/arm64
+          build-args: |
+            phpVersion=8.2
+          tags: "${{vars.BUILDKIT_IMAGE}}:8.2"
       -
         name: Build and push 8.2 alpine
         uses: docker/build-push-action@v3
         with:
-          file: "./src/docker/8.2/Dockerfile.alpine"
+          file: "./src/docker/Dockerfile.alpine"
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: |
-           "${{env.BUILDKIT_IMAGE}}:8.2-alpine"
-      -
-        name: Build and push 8.3 alpine
-        uses: docker/build-push-action@v3
-        with:
-          file: "./src/docker/8.3/Dockerfile.alpine"
-          push: true
-          platforms: linux/amd64,linux/arm64
-          tags: |
-           "${{env.BUILDKIT_IMAGE}}:8.3-alpine"
+          build-args: |
+            phpVersion=8.2
+          tags: "${{vars.BUILDKIT_IMAGE}}:8.2-alpine"
       -
         name: Build and push 8.3
         uses: docker/build-push-action@v3
         with:
-          file: "./src/docker/8.3/Dockerfile"
+          file: "./src/docker/Dockerfile"
           push: true
           platforms: linux/amd64,linux/arm64
+          build-args: |
+            phpVersion=8.3
           tags: |
-           "${{env.BUILDKIT_IMAGE}}:8.3"
-           "${{env.BUILDKIT_IMAGE}}:latest"
+           "${{vars.BUILDKIT_IMAGE}}:8.3"
+      -
+        name: Build and push 8.3 alpine
+        uses: docker/build-push-action@v3
+        with:
+          file: "./src/docker/Dockerfile.alpine"
+          push: true
+          platforms: linux/amd64,linux/arm64
+          build-args: |
+            phpVersion=8.3
+          tags: |
+           "${{vars.BUILDKIT_IMAGE}}:8.3-alpine"
+      -
+       name: Build and push 8.4 alpine
+       uses: docker/build-push-action@v3
+       with:
+         file: "./src/docker/Dockerfile.alpine"
+         push: true
+         platforms: linux/amd64,linux/arm64
+         build-args: |
+           phpVersion=8.4
+         tags: |
+          "${{vars.BUILDKIT_IMAGE}}:8.4-alpine"
+      -
+        name: Build and push 8.4
+        uses: docker/build-push-action@v3
+        with:
+          file: "./src/docker/Dockerfile"
+          push: true
+          platforms: linux/amd64,linux/arm64
+          build-args: |
+            phpVersion=8.4
+          tags: |
+           "${{vars.BUILDKIT_IMAGE}}:8.4"
+           "${{vars.BUILDKIT_IMAGE}}:latest"
