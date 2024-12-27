@@ -1,0 +1,29 @@
+services:
+    php-fpm:
+        image: jkaninda/laravel-php-fpm
+        container_name: php-fpm
+        restart: unless-stopped 
+        user: www-data #Use www-data user  production usage
+        volumes:
+        #Project root
+            - ./:/var/www/html
+        networks:
+            - web #if you're using networks between containers
+    #Nginx server
+    nginx-server:
+     image: jkaninda/nginx-fpm:alpine
+     container_name: nginx-server
+     restart: unless-stopped
+     ports:
+      - 80:80
+     volumes:
+      - ./:/var/www/html
+     environment:
+       - DOCUMENT_ROOT=/var/www/html/public
+       - CLIENT_MAX_BODY_SIZE=20M
+       - PHP_FPM_HOST=php-fpm:9000 
+     networks:
+      - web
+networks:
+  web:
+   external: false
