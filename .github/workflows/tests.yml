@@ -6,6 +6,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Build Docker Image
+        run: |
+            docker buildx build -f src/docker/Dockerfile --build-arg phpVersion=8.4 -t ${{ vars.BUILDKIT_IMAGE }}:latest --load .
+      - name: Verify Docker images
+        run: |
+            docker images
       - name: Create Laravel project
         run: |
          composer create-project laravel/laravel laravel
