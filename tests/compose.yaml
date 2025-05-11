@@ -12,7 +12,7 @@ services:
       ports:
        - 3306:3306
     php-fpm:
-        image: jkaninda/laravel-php-fpm
+        image: jkaninda/laravel-php-fpm:latest
         container_name: php-fpm
         restart: unless-stopped
         #user: www-data #Use www-data user  production usage
