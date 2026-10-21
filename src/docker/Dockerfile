@@ -65,14 +65,7 @@ RUN set -eux; \
         libxml2-dev libzip-dev zlib1g-dev; \
     docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp; \
     docker-php-ext-install -j"$(nproc)" bcmath exif gd intl mbstring pcntl pdo_mysql pdo_pgsql zip; \
-    # One extension per call with retries: pecl does not fail when one of several packages fails
-    for ext in redis memcached rdkafka; do \
-        n=0; \
-        until pecl install -f "$ext" && [ -f "$(php-config --extension-dir)/$ext.so" ]; do \
-            n=$((n + 1)); [ "$n" -ge 3 ] && { echo "pecl install $ext failed"; exit 1; }; \
-            sleep 10; \
-        done; \
-    done; \
+    pecl install redis memcached rdkafka; \
     docker-php-ext-enable redis memcached rdkafka; \
     # OPcache is always compiled in since PHP 8.5
     if ! php -m | grep -qi '^zend opcache$'; then docker-php-ext-install opcache; fi; \

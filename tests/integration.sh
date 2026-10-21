@@ -21,7 +21,7 @@ docker run --rm "$IMAGE" php -m > modules.txt
 for ext in bcmath exif gd intl mbstring memcached pcntl pdo_mysql pdo_pgsql rdkafka redis zip "Zend OPcache"; do
     grep -qx "$ext" modules.txt || { echo "Missing extension: $ext"; exit 1; }
 done
-if docker run --rm "$IMAGE" sh -c 'php -m 2>&1' 2>/dev/null | grep -iE 'warning|unable to load'; then
+if docker run --rm "$IMAGE" php -m 2>&1 | grep -iE 'warning|unable to load'; then
     echo "PHP startup warnings detected"; exit 1
 fi
 rm -f modules.txt
@@ -29,9 +29,7 @@ docker run --rm "$IMAGE" sh -c 'php -v && composer -V && node -v && npm -v'
 
 echo "==> Creating Laravel project"
 rm -rf laravel
-# Older Laravel releases (for PHP 8.1/8.2) are flagged by security advisories;
-# this throwaway test project only checks that the image can serve Laravel.
-docker run --rm -v "$PWD:/app" -w /app -e COMPOSER_NO_SECURITY_BLOCKING=1 "$IMAGE" \
+docker run --rm -v "$PWD:/app" -w /app "$IMAGE" \
     composer create-project --prefer-dist --no-interaction --no-progress laravel/laravel laravel
 docker run --rm -v "$PWD/laravel:/var/www/html" "$IMAGE" \
     chown -R www-data:www-data storage bootstrap/cache database
@@ -50,8 +48,7 @@ echo "==> Running migrations"
 docker exec --user www-data php-fpm php artisan migrate --force
 
 echo "==> Checking HTTP response"
-# Request Nginx from inside the compose network so host port conflicts cannot interfere
-code=$(docker exec php-fpm curl -s -o /dev/null -w '%{http_code}' http://nginx-server)
+code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:$HTTP_PORT")
 echo "HTTP $code"
 [ "$code" = "200" ]
 
