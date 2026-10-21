@@ -3,105 +3,85 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
+    inputs:
+      legacy:
+        description: 'Also build legacy images (7.2, 7.3, 7.4, 8.0)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  LATEST_PHP: "8.5"
+
 jobs:
   docker:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.1", "8.2", "8.3", "8.4", "8.5"]
+        variant: ["debian", "alpine"]
     steps:
-      - 
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - 
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - 
-        name: Login to DockerHub
-        uses: docker/login-action@v2
+      - uses: actions/checkout@v5
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Build and push 8.1
-        uses: docker/build-push-action@v3
+      - name: Compute tags
+        id: meta
+        run: |
+          image="${{ vars.BUILDKIT_IMAGE }}"
+          if [ "${{ matrix.variant }}" = "alpine" ]; then
+            file=./src/docker/Dockerfile.alpine
+            tags="${image}:${{ matrix.php }}-alpine"
+            [ "${{ matrix.php }}" = "${LATEST_PHP}" ] && tags="${tags},${image}:alpine"
+          else
+            file=./src/docker/Dockerfile
+            tags="${image}:${{ matrix.php }}"
+            [ "${{ matrix.php }}" = "${LATEST_PHP}" ] && tags="${tags},${image}:latest"
+          fi
+          echo "file=${file}" >> "$GITHUB_OUTPUT"
+          echo "tags=${tags}" >> "$GITHUB_OUTPUT"
+      - name: Build and push ${{ matrix.php }} ${{ matrix.variant }}
+        uses: docker/build-push-action@v6
         with:
-          file: "./src/docker/Dockerfile"
+          context: .
+          file: ${{ steps.meta.outputs.file }}
           push: true
+          pull: true
           platforms: linux/amd64,linux/arm64
           build-args: |
-            phpVersion=8.1
-          tags: "${{ vars.BUILDKIT_IMAGE }}:8.1"
-      -
-        name: Build and push 8.1 alpine
-        uses: docker/build-push-action@v3
-        with:
-          file: "./src/docker/Dockerfile.alpine"
-          push: true
-          platforms: linux/amd64,linux/arm64
-          build-args: |
-            phpVersion=8.1
-          tags: "${{ vars.BUILDKIT_IMAGE }}:8.1-alpine"
-      -
-        name: Build and push 8.2
-        uses: docker/build-push-action@v3
-        with:
-          file: "./src/docker/Dockerfile"
-          push: true
-          platforms: linux/amd64,linux/arm64
-          build-args: |
-            phpVersion=8.2
-          tags: "${{vars.BUILDKIT_IMAGE}}:8.2"
-      -
-        name: Build and push 8.2 alpine
-        uses: docker/build-push-action@v3
-        with:
-          file: "./src/docker/Dockerfile.alpine"
-          push: true
-          platforms: linux/amd64,linux/arm64
-          build-args: |
-            phpVersion=8.2
-          tags: "${{vars.BUILDKIT_IMAGE}}:8.2-alpine"
-      -
-        name: Build and push 8.3
-        uses: docker/build-push-action@v3
-        with:
-          file: "./src/docker/Dockerfile"
-          push: true
-          platforms: linux/amd64,linux/arm64
-          build-args: |
-            phpVersion=8.3
-          tags: |
-           "${{vars.BUILDKIT_IMAGE}}:8.3"
-      -
-        name: Build and push 8.3 alpine
-        uses: docker/build-push-action@v3
-        with:
-          file: "./src/docker/Dockerfile.alpine"
-          push: true
-          platforms: linux/amd64,linux/arm64
-          build-args: |
-            phpVersion=8.3
-          tags: |
-           "${{vars.BUILDKIT_IMAGE}}:8.3-alpine"
-      -
-       name: Build and push 8.4 alpine
-       uses: docker/build-push-action@v3
-       with:
-         file: "./src/docker/Dockerfile.alpine"
-         push: true
-         platforms: linux/amd64,linux/arm64
-         build-args: |
-           phpVersion=8.4
-         tags: |
-          "${{vars.BUILDKIT_IMAGE}}:8.4-alpine"
-      -
-        name: Build and push 8.4
-        uses: docker/build-push-action@v3
-        with:
-          file: "./src/docker/Dockerfile"
-          push: true
-          platforms: linux/amd64,linux/arm64
-          build-args: |
-            phpVersion=8.4
-          tags: |
-           "${{vars.BUILDKIT_IMAGE}}:8.4"
-           "${{vars.BUILDKIT_IMAGE}}:latest"
+            phpVersion=${{ matrix.php }}
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha,scope=${{ matrix.php }}-${{ matrix.variant }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.php }}-${{ matrix.variant }}
 
+  legacy:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.legacy }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["7.2", "7.3", "7.4", "8.0"]
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push ${{ matrix.php }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./src/docker/${{ matrix.php }}/Dockerfile
+          push: true
+          tags: ${{ vars.BUILDKIT_IMAGE }}:${{ matrix.php }}
