@@ -1,53 +1,31 @@
 name: Tests
 on:
   push:
+  pull_request:
+
 jobs:
   integration:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.1", "8.2", "8.3", "8.4", "8.5"]
+        variant: ["debian", "alpine"]
     steps:
-      - uses: actions/checkout@v4
-      - name: Build Docker Image
-        run: |
-            docker buildx build -f src/docker/Dockerfile --build-arg phpVersion=8.4 -t ${{ vars.BUILDKIT_IMAGE }}:latest --load .
-      - name: Verify Docker images
-        run: |
-            docker images
-      - name: Create Laravel project
-        run: |
-         composer create-project laravel/laravel laravel
-      - name: Fix Permission
-        run: chmod -R 777 ./laravel/storage
-      - name: Run docker-compose
-        run: 
-          cp ./tests/compose.yaml compose.yaml &&
-          docker compose -f "compose.yaml" up -d
-      - name: Create script.js for K6 test
-        run: |
-          touch script.js && cat > script.js <<EOF
-          import http from 'k6/http';
-          import { sleep } from 'k6';
-      
-          export default function () {
-            //Link
-            http.get('http://localhost');
-          }
-          EOF
-      - name: Install k6
-        run: |
-            curl https://github.com/grafana/k6/releases/download/v0.47.0/k6-v0.47.0-linux-amd64.tar.gz -L | tar xvz --strip-components 1
-      - name: Test with K6
-        run: |
-           ./k6 run script.js
-      - name: Test with curl
-        run: |
-            curl -i http://localhost
-      - name: Waiting for database connection
-        run: |
-            while ! docker exec mysql mysql --user=root --password=password -e "status" &> /dev/null ; do
-              echo "Waiting for database connection..."
-              sleep 5
-            done
-      - name: Laravel database migration test
-        run: |
-          docker exec php-fpm php artisan migrate
-
+      - uses: actions/checkout@v5
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.variant == 'alpine' && './src/docker/Dockerfile.alpine' || './src/docker/Dockerfile' }}
+          load: true
+          build-args: |
+            phpVersion=${{ matrix.php }}
+          tags: laravel-php-fpm:test
+          cache-from: type=gha,scope=${{ matrix.php }}-${{ matrix.variant }}
+      - name: Run integration tests
+        env:
+          IMAGE: laravel-php-fpm:test
+        run: ./tests/integration.sh

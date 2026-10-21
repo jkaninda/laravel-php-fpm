@@ -1,24 +1,93 @@
-ARG phpVersion=8.3-dev
+# syntax=docker/dockerfile:1
+ARG phpVersion=8.5
+FROM composer:2 AS composer
+
 FROM php:${phpVersion}-fpm-alpine
 ARG WORKDIR=/var/www/html
-ENV DOCUMENT_ROOT=${WORKDIR}
-ENV LARAVEL_PROCS_NUMBER=1
 ARG GROUP_ID=1000
 ARG USER_ID=1000
-ENV USER_NAME=www-data
 ARG GROUP_NAME=www-data
 
-# Install the PHP pdo_mysql extention
-RUN docker-php-ext-install pdo_mysql
+LABEL org.opencontainers.image.title="laravel-php-fpm" \
+      org.opencontainers.image.description="PHP-FPM image for Laravel and PHP applications (Alpine)" \
+      org.opencontainers.image.source="https://github.com/jkaninda/laravel-php-fpm" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.authors="Jonas Kaninda"
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ENV DOCUMENT_ROOT=${WORKDIR} \
+    APP_DIR=${WORKDIR} \
+    USER_NAME=www-data \
+    LARAVEL_PROCS_NUMBER=1 \
+    LARAVEL_QUEUE_WORKER_ENABLED=true \
+    LARAVEL_QUEUE_OPTIONS="--sleep=3 --tries=3" \
+    LARAVEL_SCHEDULER_ENABLED=true \
+    PHP_DATE_TIMEZONE=UTC \
+    PHP_DISPLAY_ERRORS=Off \
+    PHP_MEMORY_LIMIT=256M \
+    PHP_UPLOAD_MAX_FILESIZE=30M \
+    PHP_POST_MAX_SIZE=30M \
+    PHP_MAX_EXECUTION_TIME=30 \
+    PHP_OPCACHE_ENABLE=1 \
+    PHP_OPCACHE_ENABLE_CLI=0 \
+    PHP_OPCACHE_MEMORY_CONSUMPTION=512 \
+    PHP_OPCACHE_MAX_ACCELERATED_FILES=50000 \
+    PHP_OPCACHE_VALIDATE_TIMESTAMPS=0 \
+    PHP_OPCACHE_REVALIDATE_FREQ=0 \
+    PHP_FPM_PM=dynamic \
+    PHP_FPM_PM_MAX_CHILDREN=20 \
+    PHP_FPM_PM_START_SERVERS=2 \
+    PHP_FPM_PM_MIN_SPARE_SERVERS=1 \
+    PHP_FPM_PM_MAX_SPARE_SERVERS=3 \
+    PHP_FPM_PM_MAX_REQUESTS=500
 
-# Set working directory
+# Runtime tools and Node.js
+RUN apk add --no-cache bash curl git openssh-client unzip zip supervisor sqlite nano nodejs npm
+
+# PHP extensions (build dependencies are removed, runtime libraries are kept)
+RUN set -eux; \
+    apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+        freetype-dev libjpeg-turbo-dev libpng-dev libwebp-dev \
+        icu-dev libmemcached-dev oniguruma-dev libpq-dev librdkafka-dev \
+        libxml2-dev libzip-dev zlib-dev cyrus-sasl-dev linux-headers; \
+    docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp; \
+    docker-php-ext-install -j"$(nproc)" bcmath exif gd intl mbstring pcntl pdo_mysql pdo_pgsql zip; \
+    pecl install redis memcached rdkafka; \
+    docker-php-ext-enable redis memcached rdkafka; \
+    # OPcache is always compiled in since PHP 8.5
+    if ! php -m | grep -qi '^zend opcache$'; then docker-php-ext-install opcache; fi; \
+    runDeps="$( \
+        scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
+            | tr ',' '\n' | sort -u \
+            | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+    )"; \
+    apk add --no-cache --virtual .php-ext-rundeps $runDeps; \
+    apk del --no-network .build-deps; \
+    rm -rf /tmp/pear ~/.pearrc; \
+    ! php -m 2>&1 | grep -iE 'warning|unable to load'
+
+COPY --from=composer /usr/bin/composer /usr/local/bin/composer
+
 WORKDIR $WORKDIR
 
-RUN rm -Rf /var/www/* && \
-mkdir -p /var/www/html
+RUN rm -Rf /var/www/* && mkdir -p ${WORKDIR} /etc/supervisor/conf.d /var/log/supervisor
 
-ADD src/index.php $WORKDIR/index.php
-ADD src/php.ini $PHP_INI_DIR/conf.d/
+COPY src/index.php $WORKDIR/index.php
+COPY src/php.ini src/opcache.ini $PHP_INI_DIR/conf.d/
+COPY src/php-fpm.d/zz-laravel.conf /usr/local/etc/php-fpm.d/zz-laravel.conf
+COPY src/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+COPY --chmod=755 src/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN ln -s /usr/local/bin/entrypoint.sh /entrypoint.sh && \
+    ln -sf /etc/supervisor/supervisord.conf /etc/supervisord.conf
+
+RUN apk add --no-cache --virtual .user-deps shadow && \
+    usermod -u ${USER_ID} ${USER_NAME} && \
+    groupmod -g ${GROUP_ID} ${GROUP_NAME} && \
+    apk del --no-network .user-deps && \
+    chown -R ${USER_NAME}:${GROUP_NAME} /var/www /var/log /etc/supervisor/conf.d $PHP_INI_DIR/conf.d /tmp
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --start-interval=2s --retries=3 \
+    CMD php -r 'exit(@fsockopen("127.0.0.1", 9000) ? 0 : 1);'
+
+EXPOSE 9000
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["entrypoint"]

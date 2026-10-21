@@ -1,3 +1,6 @@
+.DS_Store
 /.history
 laravel
 docker-compose.yml
+.DS_Store
+tests/modules.txt
