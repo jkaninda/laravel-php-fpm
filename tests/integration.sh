@@ -29,7 +29,9 @@ docker run --rm "$IMAGE" sh -c 'php -v && composer -V && node -v && npm -v'
 
 echo "==> Creating Laravel project"
 rm -rf laravel
-docker run --rm -v "$PWD:/app" -w /app "$IMAGE" \
+# Older Laravel releases (for PHP 8.1/8.2) are flagged by security advisories;
+# this throwaway test project only checks that the image can serve Laravel.
+docker run --rm -v "$PWD:/app" -w /app -e COMPOSER_NO_SECURITY_BLOCKING=1 "$IMAGE" \
     composer create-project --prefer-dist --no-interaction --no-progress laravel/laravel laravel
 docker run --rm -v "$PWD/laravel:/var/www/html" "$IMAGE" \
     chown -R www-data:www-data storage bootstrap/cache database
