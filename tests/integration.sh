@@ -21,7 +21,7 @@ docker run --rm "$IMAGE" php -m > modules.txt
 for ext in bcmath exif gd intl mbstring memcached pcntl pdo_mysql pdo_pgsql rdkafka redis zip "Zend OPcache"; do
     grep -qx "$ext" modules.txt || { echo "Missing extension: $ext"; exit 1; }
 done
-if docker run --rm "$IMAGE" php -m 2>&1 | grep -iE 'warning|unable to load'; then
+if docker run --rm "$IMAGE" sh -c 'php -m 2>&1' 2>/dev/null | grep -iE 'warning|unable to load'; then
     echo "PHP startup warnings detected"; exit 1
 fi
 rm -f modules.txt
@@ -50,7 +50,8 @@ echo "==> Running migrations"
 docker exec --user www-data php-fpm php artisan migrate --force
 
 echo "==> Checking HTTP response"
-code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:$HTTP_PORT")
+# Request Nginx from inside the compose network so host port conflicts cannot interfere
+code=$(docker exec php-fpm curl -s -o /dev/null -w '%{http_code}' http://nginx-server)
 echo "HTTP $code"
 [ "$code" = "200" ]
 
