@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       legacy:
-        description: 'Also build legacy images (7.2, 7.3, 7.4, 8.0)'
+        description: 'Also build legacy images (7.2, 7.3, 7.4, 8.0, 8.1)'
         required: false
         default: false
         type: boolean
@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ["8.1", "8.2", "8.3", "8.4", "8.5"]
+        php: ["8.2", "8.3", "8.4", "8.5"]
         variant: ["debian", "alpine"]
     steps:
       - uses: actions/checkout@v7
@@ -68,9 +68,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ["7.2", "7.3", "7.4", "8.0"]
+        include:
+          - { tag: "7.2", phpVersion: "7.2", file: ./src/docker/7.2/Dockerfile, platforms: linux/amd64 }
+          - { tag: "7.3", phpVersion: "7.3", file: ./src/docker/7.3/Dockerfile, platforms: linux/amd64 }
+          - { tag: "7.4", phpVersion: "7.4", file: ./src/docker/7.4/Dockerfile, platforms: linux/amd64 }
+          - { tag: "8.0", phpVersion: "8.0", file: ./src/docker/8.0/Dockerfile, platforms: linux/amd64 }
+          - { tag: "8.1", phpVersion: "8.1", file: ./src/docker/Dockerfile, platforms: "linux/amd64,linux/arm64" }
+          - { tag: "8.1-alpine", phpVersion: "8.1", file: ./src/docker/Dockerfile.alpine, platforms: "linux/amd64,linux/arm64" }
     steps:
       - uses: actions/checkout@v7
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
       - name: Login to DockerHub
@@ -78,10 +86,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push ${{ matrix.php }}
+      - name: Build and push ${{ matrix.tag }}
         uses: docker/build-push-action@v7
         with:
           context: .
-          file: ./src/docker/${{ matrix.php }}/Dockerfile
+          file: ${{ matrix.file }}
           push: true
-          tags: ${{ vars.BUILDKIT_IMAGE }}:${{ matrix.php }}
+          platforms: ${{ matrix.platforms }}
+          build-args: |
+            phpVersion=${{ matrix.phpVersion }}
+          tags: ${{ vars.BUILDKIT_IMAGE }}:${{ matrix.tag }}
