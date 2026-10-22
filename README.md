@@ -43,12 +43,8 @@ This image is ideal for developers looking for a streamlined, high-performance s
 | 8.4 | `8.4` | `8.4-alpine` |
 | 8.3 | `8.3` | `8.3-alpine` |
 | 8.2 | `8.2` | `8.2-alpine` |
-| 8.1 | `8.1` | `8.1-alpine` |
 
-Legacy images (no longer rebuilt automatically, PHP is end-of-life): `8.0`, `7.4`, `7.3`, `7.2`.
-
-> [!NOTE]
-> PHP 8.1 is end-of-life upstream. The image is still built, but please plan an upgrade.
+Legacy images (PHP is end-of-life, no longer rebuilt automatically or tested): `8.1`, `8.1-alpine`, `8.0`, `7.4`, `7.3`, `7.2`.
 
 ---
 

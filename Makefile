@@ -1,5 +1,5 @@
 IMAGE_NAME?=jkaninda/laravel-php-fpm
-PHP_VERSIONS?=8.1 8.2 8.3 8.4 8.5
+PHP_VERSIONS?=8.2 8.3 8.4 8.5
 LATEST_PHP?=8.5
 
 .PHONY: all
@@ -17,7 +17,8 @@ build-latest: build-$(LATEST_PHP) build-$(LATEST_PHP)-alpine
 	docker tag ${IMAGE_NAME}:$(LATEST_PHP) ${IMAGE_NAME}:latest
 	docker tag ${IMAGE_NAME}:$(LATEST_PHP)-alpine ${IMAGE_NAME}:alpine
 
-# Legacy images (7.2, 7.3, 7.4, 8.0)
+# Legacy images (7.2, 7.3, 7.4, 8.0). PHP 8.1 is legacy too but uses the
+# shared Dockerfiles: make build-8.1 / make build-8.1-alpine
 .PHONY: build-7.2 build-7.3 build-7.4 build-8.0
 build-7.2 build-7.3 build-7.4 build-8.0: build-%:
 	docker build -f src/docker/$*/Dockerfile -t ${IMAGE_NAME}:$* .
